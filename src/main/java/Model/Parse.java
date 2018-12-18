@@ -97,15 +97,16 @@ public class Parse {
      * @param doc- the current doc
      * @param t-   the text of the current doc
      */
-    public void parser(Docs doc, String t, boolean toStem) {
+    public String parser(Docs doc, String t, boolean toStem, boolean isQuery) {
 
+        StringBuilder termsOfQuery = new StringBuilder("");
         //add the city to the HashMap
-        if ((doc.getCity() != null && (!cities.containsKey(doc.getCity())) && (!cities.containsKey(doc.getCity().toUpperCase())))) {
+        if ((doc != null && doc.getCity() != null && (!cities.containsKey(doc.getCity())) && (!cities.containsKey(doc.getCity().toUpperCase())))) {
 
             cities.put(doc.getCity(), new City(doc.getCity()));
         }
         //add the language of the doc to the Languages HashSet
-        if (Languages != null) {
+        if (Languages != null && doc != null) {
             Languages.add(doc.getLanguage());
         }
 
@@ -132,15 +133,30 @@ public class Parse {
                     && text[i + 2].equals("and") && isNumericStart(text[i + 3])) {
                 if (isStopWord(text[i + 1]) || isStopWord(text[i + 2]) || isStopWord(text[i + 3]))
                     continue;
-                addTheDictionary(text[i] + " " + text[i + 1] + " " + text[i + 2] + " " + text[i + 3], doc, i);
-                addTheDictionary(text[i + 1] + "-" + text[i + 3], doc, i);
-                addTheDictionary(text[i + 1], doc, i);
-                addTheDictionary(text[i + 3], doc, i);
+                if (!isQuery) {  //if is not query
+                    addTheDictionary(text[i] + " " + text[i + 1] + " " + text[i + 2] + " " + text[i + 3], doc, i);
+                    addTheDictionary(text[i + 1] + "-" + text[i + 3], doc, i);
+                    addTheDictionary(text[i + 1], doc, i);
+                    addTheDictionary(text[i + 3], doc, i);
+
+                } else {    //if is query
+                    termsOfQuery.append(text[i] + " " + text[i + 1] + " " + text[i + 2] + " " + text[i + 3]);
+                    termsOfQuery.append(text[i + 1] + "-" + text[i + 3]);
+                    termsOfQuery.append(text[i + 1]);
+                    termsOfQuery.append(text[i + 3]);
+
+                }
                 i = i + 3;
                 continue;
+
             }
             if (isContainDash(text[i])) {
-                addTheDictionary(text[i], doc, i);
+                if (!isQuery) {
+                    addTheDictionary(text[i], doc, i);
+                } else {
+                    termsOfQuery.append(text[i]);
+                }
+
                 continue;
             }
             if (isNumericStart(text[i])) {
@@ -148,7 +164,11 @@ public class Parse {
                 //text.set(i, replaceOby0(text.get(i))); /// replace O by 0
                 text[i] = replaceOby0(text[i]); /// replace O by 0
                 if (isUSDollars(text, i)) { // 320 million U.S. dollars
-                    addTheDictionary(usDollarsConvert(text[i], text[i + 1]), doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(usDollarsConvert(text[i], text[i + 1]), doc, i);
+                    } else {
+                        termsOfQuery.append(usDollarsConvert(text[i], text[i + 1]));
+                    }
                     i = i + 3;
                     continue;
                 }
@@ -157,7 +177,12 @@ public class Parse {
                     if (i + 2 < text.length && text[i + 2].equals("Dollars")) {
                         if (isStopWord(text[i + 1]) || isStopWord(text[i + 2]))
                             continue;
-                        addTheDictionary(text[i] + "000" + " M Dollars", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + "000" + " M Dollars", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + "000" + " M Dollars");
+                        }
+
                         //terms.add(doc.getText().get(i) + "000" + " M Dollars");
                         i = i + 2;
                         continue;
@@ -167,7 +192,12 @@ public class Parse {
                     if (i + 2 < text.length && text[i + 2].equals("Dollars")) {
                         if (isStopWord(text[i + 1]) || isStopWord(text[i + 2]))
                             continue;
-                        addTheDictionary(text[i] + " M Dollars", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + " M Dollars", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + " M Dollars");
+                        }
+
                         //terms.add(doc.getText().get(i) + " M Dollars");
                         i = i + 2;
                         continue;
@@ -178,7 +208,12 @@ public class Parse {
                     if (isStopWord(text[i + 1]) || isStopWord(text[i + 2]))
                         continue;
                     //terms.add(doc.getText().get(i) + " " + doc.getText().get(i + 1) + " " + doc.getText().get(i + 2));
-                    addTheDictionary(text[i] + " " + text[i + 1] + " " + text[i + 2], doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i] + " " + text[i + 1] + " " + text[i + 2], doc, i);
+                    } else {
+                        termsOfQuery.append(text[i] + " " + text[i + 1] + " " + text[i + 2]);
+                    }
+
                     i = i + 2;
                     continue;
                 }
@@ -192,17 +227,32 @@ public class Parse {
                         tmp = fromStringToDouble(text[i]) / 1000000;
                         if (isContainDot(tmp.toString())) { //////// string contain dot
                             int j = tmp.intValue();
-                            addTheDictionary(j + " M Dollars", doc, i);
+                            if (!isQuery) {
+                                addTheDictionary(j + " M Dollars", doc, i);
+                            } else {
+                                termsOfQuery.append(j + " M Dollars");
+                            }
+
                             i = i + 1;
                             continue;
                         }
 
-                        addTheDictionary(Double.toString(tmp) + " M Dollars", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(Double.toString(tmp) + " M Dollars", doc, i);
+                        } else {
+                            termsOfQuery.append(Double.toString(tmp) + " M Dollars");
+                        }
+
                         i = i + 1;
                         continue;
                     } else { //1.7320 Dollars
                         //terms.add(doc.getText().get(i) + " Dollars");
-                        addTheDictionary(text[i] + " Dollars", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + " Dollars", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + " Dollars");
+                        }
+
                         i = i + 1;
                         continue;
                     }
@@ -214,7 +264,12 @@ public class Parse {
                     if (text[i].length() == 1)
                         if (isStopWord(text[i + 1]))
                             continue;
-                    addTheDictionary(months.get(text[i + 1]) + "-0" + text[i], doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(months.get(text[i + 1]) + "-0" + text[i], doc, i);
+                    } else {
+                        termsOfQuery.append(months.get(text[i + 1]) + "-0" + text[i]);
+                    }
+
                     //else addTheDictionary(months.get(text[i + 1]) + "-" + text[i], doc);
                     i = i + 1;
                     continue;
@@ -225,7 +280,12 @@ public class Parse {
                         if (isStopWord(text[i + 1]))
                             continue;
                         //terms.add(doc.getText().get(i) + "M");
-                        addTheDictionary(text[i] + "M", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + "M", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + "M");
+                        }
+
                         i++;
                         continue;
                     }
@@ -234,7 +294,12 @@ public class Parse {
                     if (text[i + 1].equals("Billion")) {
                         if (isStopWord(text[i + 1]))
                             continue;
-                        addTheDictionary(text[i] + "B", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + "B", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + "B");
+                        }
+
                         i++;
                         continue;
                     }
@@ -243,7 +308,12 @@ public class Parse {
                     if (text[i + 1].equals("trillion") || text[i + 1].equals("Trillion")) {
                         if (isStopWord(text[i + 1]))
                             continue;
-                        addTheDictionary(text[i] + "00B", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + "00B", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + "00B");
+                        }
+
                         i++;
                         continue;
                     }
@@ -252,7 +322,12 @@ public class Parse {
                     if (text[i + 1].equals("Thousand")) {
                         if (isStopWord(text[i + 1]))
                             continue;
-                        addTheDictionary(text[i] + "K", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(text[i] + "K", doc, i);
+                        } else {
+                            termsOfQuery.append(text[i] + "K");
+                        }
+
                         i++;
                         continue;
                     }
@@ -261,14 +336,24 @@ public class Parse {
                 // is % end or next word is percentage / percent
                 if (text[i].length() > 1 && isNumericStart(text[i]) &&
                         lastCharIsPercents(text[i])) {
-                    addTheDictionary(text[i], doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i], doc, i);
+                    } else {
+                        termsOfQuery.append(text[i]);
+                    }
+
                     continue;
                 }
                 if (i + 1 < text.length && isNumericStart(text[i]) &&
                         (text[i + 1].equals("percent") || text[i + 1].equals("percentage"))) {
                     if (isStopWord(text[i + 1]))
                         continue;
-                    addTheDictionary(text[i] + "%", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i] + "%", doc, i);
+                    } else {
+                        termsOfQuery.append(text[i] + "%");
+                    }
+
                     i = i + 1;
                     continue;
                 }
@@ -279,19 +364,34 @@ public class Parse {
                 if (num >= 1000 && num < 1000000) {
                     num = num / 1000;
                     //terms.add(num.toString() + "K");
-                    addTheDictionary(num.toString() + "K", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(num.toString() + "K", doc, i);
+                    } else {
+                        termsOfQuery.append(num.toString() + "K");
+                    }
+
                     continue;
                 }
                 if (num >= 1000000 && num < 1000000000) {
                     num = num / 1000000;
                     //terms.add(num.toString() + "M");
-                    addTheDictionary(num.toString() + "M", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(num.toString() + "M", doc, i);
+                    } else {
+                        termsOfQuery.append(num.toString() + "M");
+                    }
+
                     continue;
                 }
                 if (num > 1000000000) {
                     num = num / 1000000000;
                     //terms.add(num.toString() + "B");
-                    addTheDictionary(num.toString() + "B", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(num.toString() + "B", doc, i);
+                    } else {
+                        termsOfQuery.append(num.toString() + "B");
+                    }
+
                     continue;
                 }
 
@@ -303,8 +403,14 @@ public class Parse {
                         text[i + 1].length() <= 2) {
                     if (isStopWord(text[i + 1]))
                         continue;//June 4, JUNE 4
-                    if (text[i + 1].length() == 1)
-                        addTheDictionary(months.get(text[i]) + "-0" + text[i + 1], doc, i);
+                    if (text[i + 1].length() == 1) {
+                        if (!isQuery) {
+                            addTheDictionary(months.get(text[i]) + "-0" + text[i + 1], doc, i);
+                        } else {
+                            termsOfQuery.append(months.get(text[i]) + "-0" + text[i + 1]);
+                        }
+
+                    }
                     //else addTheDictionary(months.get(text[i]) + "-" + text[i + 1], doc);
                     //terms.add(months.get(doc.getText().get(i)) + "-" + doc.getText().get(i + 1));
                     i = i + 1;
@@ -316,7 +422,12 @@ public class Parse {
                     //terms.add(doc.getText().get(i + 1) + "-" + months.get(doc.getText().get(i)));
                     if (isStopWord(text[i + 1]))
                         continue;
-                    addTheDictionary(text[i + 1] + "-" + months.get(text[i]), doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i + 1] + "-" + months.get(text[i]), doc, i);
+                    } else {
+                        termsOfQuery.append(text[i + 1] + "-" + months.get(text[i]));
+                    }
+
                     i = i + 1;
                     continue;
                 }
@@ -331,7 +442,12 @@ public class Parse {
             if (isDollar((text[i])) && isNumericStart(text[i].substring(1, (text[i].length() - 1)))) {
                 if (i + 1 < text.length && text[i + 1].equals("billion")) { //$100 billion:
                     //terms.add(doc.getText().get(i).substring(1, (doc.getText().get(i).length() - 1)) + "000 M Dollars");
-                    addTheDictionary(text[i].substring(1, (text[i]).length()) + "000 M Dollars", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i].substring(1, (text[i]).length()) + "000 M Dollars", doc, i);
+                    } else {
+                        termsOfQuery.append(text[i].substring(1, (text[i]).length()) + "000 M Dollars");
+                    }
+
                     i = i + 1;
                     continue;
                 }
@@ -339,7 +455,12 @@ public class Parse {
                     //terms.add(doc.getText().get(i).substring(1, (doc.getText().get(i).length() - 1)) + " M Dollars");
                     if (isStopWord(text[i + 1]))
                         continue;
-                    addTheDictionary(text[i].substring(1, (text[i].length())) + " M Dollars", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i].substring(1, (text[i].length())) + " M Dollars", doc, i);
+                    } else {
+                        termsOfQuery.append(text[i].substring(1, (text[i].length())) + " M Dollars");
+                    }
+
                     i = i + 1;
                     continue;
                 }
@@ -350,18 +471,33 @@ public class Parse {
                 Double theNum = fromStringToDouble(theNumber);
                 if (theNum != null && theNum < 1000000) {
                     //terms.add(theNumber + " Dollars");
-                    addTheDictionary(theNumber + " Dollars", doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(theNumber + " Dollars", doc, i);
+                    } else {
+                        termsOfQuery.append(theNumber + " Dollars");
+                    }
+
                     continue;
                 }
                 if (theNum != null && theNum > 1000000) {
                     theNum = theNum / 1000000;
                     if (isContainDot(theNum.toString())) { //////// string contain dot
                         int j = theNum.intValue();
-                        addTheDictionary(j + " M Dollars", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(j + " M Dollars", doc, i);
+                        } else {
+                            termsOfQuery.append(j + " M Dollars");
+                        }
+
                         continue;
                     } else {
                         //terms.add(theNum.toString() + " M Dollars");
-                        addTheDictionary(theNum.toString() + " M Dollars", doc, i);
+                        if (!isQuery) {
+                            addTheDictionary(theNum.toString() + " M Dollars", doc, i);
+                        } else {
+                            termsOfQuery.append(theNum.toString() + " M Dollars");
+                        }
+
                         continue;
                     }
                 }
@@ -372,15 +508,29 @@ public class Parse {
                         || text[i + 1].equals("PM") || text[i + 1].equals("pm")
                         || text[i + 1].equals("p.m.") || text[i + 1].equals("a.m.")
                         || text[i + 1].equals("P.M.") || text[i + 1].equals("A.M."))) {
-                    addTheDictionary(text[i] + " " + text[i + 1], doc, i);
+                    if (!isQuery) {
+                        addTheDictionary(text[i] + " " + text[i + 1], doc, i);
+                    } else {
+                        termsOfQuery.append(text[i] + " " + text[i + 1]);
+                    }
+
                     continue;
 
                 }
             }
 
+            if (!isQuery) {
+                addTheDictionary(text[i], doc, i);
+            }else{
+                termsOfQuery.append(text[i]);
+            }
 
-            addTheDictionary(text[i], doc, i);
         } //for
+        if(isQuery){
+            return termsOfQuery.toString();
+        }else{
+            return null;
+        }
     }
 
     // replace 'o' with zero
@@ -720,8 +870,8 @@ public class Parse {
                 if (term.getDocsAndAmount().containsKey(doc)) { //if the term exists the given doc
                     Pair<Integer, StringBuilder> newPir = new Pair<Integer, StringBuilder>(term.getDocsAndAmount().get(doc).getKey() + 1, term.getDocsAndAmount().get(doc).getValue().append(" ,").append(i));
                     term.getDocsAndAmount().put(doc, newPir);
-                    String tempCity = Character.toUpperCase(termValue.charAt(0))+termValue.substring(1,termValue.length()).toLowerCase();
-                    if (cities.containsKey(tempCity)&& !isProblem ) { //if a city
+                    String tempCity = Character.toUpperCase(termValue.charAt(0)) + termValue.substring(1, termValue.length()).toLowerCase();
+                    if (cities.containsKey(tempCity) && !isProblem) { //if a city
                         cities.get(tempCity).getLocations().get(doc.getDocNo()).append(" ,").append(i);
 
                     }
@@ -729,7 +879,7 @@ public class Parse {
 
                 } else {
                     term.getDocsAndAmount().put(doc, new Pair<Integer, StringBuilder>(1, new StringBuilder("").append(i))); //if the term does not exist the given doc
-                    String tempCity = Character.toUpperCase(termValue.charAt(0))+termValue.substring(1,termValue.length()).toLowerCase();
+                    String tempCity = Character.toUpperCase(termValue.charAt(0)) + termValue.substring(1, termValue.length()).toLowerCase();
                     //String tempUpper = termValue.charAt(0) + termValue.substring(1, termValue.length()).toLowerCase();
                     if (cities.containsKey(tempCity) && !isProblem) {//|| cities.containsKey(tempCity.toUpperCase())|| cities.containsKey(tempCity.toLowerCase())) {  //if a city
                         cities.get(tempCity).getLocations().put(doc.getDocNo(), new StringBuilder("").append(i));
