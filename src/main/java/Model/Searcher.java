@@ -8,14 +8,16 @@ import java.util.stream.Stream;
 
 public class Searcher {
 
-    String query;
+    ArrayList<QueryTerm> query;
+    ArrayList<QueryDoc> docsContainsQueryTerms;
+
 
 
     public Searcher() {
         //this.query = query;
     }
 
-    public void setQuery(String query) {
+    public void setQuery(ArrayList<QueryTerm> query) {
         this.query = query;
     }
 
@@ -26,6 +28,7 @@ public class Searcher {
 
         for (int i = 0; i <splitedQueryAfterParse.length ; i++) {
             String curretTermOfQuery = splitedQueryAfterParse[i];
+
             //check if the term exists the dictionary
 
             //toLowerCase

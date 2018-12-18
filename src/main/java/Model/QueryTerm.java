@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryTerm {
-    ArrayList<String> docs;
-    ArrayList<Integer> timesInDocs;
+    String value;
+    ArrayList<QueryDoc> DocsContainTerm;
+    /*ArrayList<String> docs;
+    ArrayList<Integer> timesInDocs;*/
     int appearanceInQuery;
 
-    public QueryTerm() {
-        docs = new ArrayList<String>();
-        timesInDocs = new ArrayList<Integer>();
+    public QueryTerm(String value) {
+        /*docs = new ArrayList<String>();
+        timesInDocs = new ArrayList<Integer>();*/
         appearanceInQuery =0;
+        this.value = value;
     }
 }
 
