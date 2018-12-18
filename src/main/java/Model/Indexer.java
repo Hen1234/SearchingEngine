@@ -26,7 +26,7 @@ public class Indexer {
     // set of Documents holding all of the Documents in corpus
     private HashSet<Docs> documents;
     // sorted dictionary hold as key => the term, value=>file number in posting, pointer to exact line
-    private TreeMap<String, String> sorted;
+    static TreeMap<String, String> sorted;
     // HashMap fot docs
     private HashMap<String, Docs> docsHashMap;
 

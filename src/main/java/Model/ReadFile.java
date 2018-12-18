@@ -19,7 +19,7 @@ public class ReadFile {
 
     File[] files;
     private ArrayList<String> words;
-    private Parse p;
+    static Parse p;
     private Indexer indexer;
     private CitiesIndexer citiesIndexer;
     static int countFiles;
@@ -27,7 +27,7 @@ public class ReadFile {
     private String corpusPath;
     private String stopWordsPath;
     private String postingPath;
-    private boolean toStem;
+    static boolean toStem;
     private HashSet<String> languages;
     private HashMap<String,City> cities;
 
@@ -201,7 +201,7 @@ public class ReadFile {
 
 
                     curerntDoc.setLanguage(findTheLanguage);
-                    p.parser(curerntDoc, text, toStem);
+                    p.parser(curerntDoc, text, toStem,false);
 
 
                     indexer.add(p.getTempDictionary(), curerntDoc, ReadFile.countFiles, postingPath, toStem);
