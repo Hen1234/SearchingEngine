@@ -7,7 +7,7 @@ import java.util.List;
 public class QueryTerm {
 
     String value;
-    HashMap<Docs, Integer> docsAndAmount;
+    HashMap<String, Integer> docsAndAmount; //docNo -> amountOfAppearanceInDoc
     //ArrayList<QueryDoc> DocsContainTerm;
 
     int df;
@@ -20,7 +20,40 @@ public class QueryTerm {
         timesInDocs = new ArrayList<Integer>();*/
         appearanceInQuery =0;
         this.value = value;
-        docsAndAmount = new HashMap<Docs, Integer>();
+        docsAndAmount = new HashMap<String, Integer>();
+        df =0;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public HashMap<String, Integer> getDocsAndAmount() {
+        return docsAndAmount;
+    }
+
+    public int getDf() {
+        return df;
+    }
+
+    public int getAppearanceInQuery() {
+        return appearanceInQuery;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public void setDocsAndAmount(HashMap<String, Integer> docsAndAmount) {
+        this.docsAndAmount = docsAndAmount;
+    }
+
+    public void setDf(int df) {
+        this.df = df;
+    }
+
+    public void setAppearanceInQuery(int appearanceInQuery) {
+        this.appearanceInQuery = appearanceInQuery;
     }
 }
 
