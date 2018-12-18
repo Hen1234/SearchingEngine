@@ -15,8 +15,19 @@ public class Docs {
     private int uniqueWords;
     // languages in doc
     private String language;
+    private int docLength;
 
+    public void setDocLength(int docLength) {
+        this.docLength = docLength;
+    }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public int getDocLength() {
+        return docLength;
+    }
 
     // date of the doc
     private String date;
@@ -32,6 +43,7 @@ public class Docs {
         this.city = city;
         this.date = date;
         this.writer = "";
+        docLength =0;
         maxft = 1;
         uniqueWords = 0;
         language = "";

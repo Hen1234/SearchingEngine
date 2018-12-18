@@ -234,6 +234,18 @@ public class ReadFile {
         } catch (Exception e) {
         }
 
+        File toWriteDocsObject = new File(postingPath + "\\" + "DocsAsObject.txt");
+        ObjectOutputStream oos1 = null;
+        try {
+            oos1 = new ObjectOutputStream(new FileOutputStream(toWriteDocsObject));
+        } catch (IOException e) {
+        }
+        try {
+            oos1.writeObject(indexer.docsHashMap);
+            oos1.close();
+        } catch (Exception e) {
+        }
+
 
         citiesIndexer.APIConnection();
         try {
@@ -324,7 +336,7 @@ public class ReadFile {
             }
 
             if ((nextDoc.getCity() == null || nextDoc.getCity().equals("")) && (nextDoc.getDate() != null || nextDoc.getDate().equals(""))) {
-                text.append(nextDoc.getDocNo() + ": " + "maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
+                text.append(nextDoc.getDocNo() + ": DocLength="+nextDoc.getDocLength() + " maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
                         nextDoc.getUniqueWords() + ", date:" + nextDoc.getDate()+", FiveMostFreqEssences:"+FiveMostFreqEssences);
                 text.append(System.lineSeparator());
                 try {
@@ -337,7 +349,7 @@ public class ReadFile {
 
             }
             if ((nextDoc.getCity() == null || nextDoc.getCity().equals("")) && (nextDoc.getDate().equals("") || nextDoc.getDate() == null)) {
-                text.append(nextDoc.getDocNo() + ": " + "maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
+                text.append(nextDoc.getDocNo() + ": DocLength="+nextDoc.getDocLength() + " maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
                         nextDoc.getUniqueWords()+", FiveMostFreqEssences:"+FiveMostFreqEssences);
                 text.append(System.lineSeparator());
                 try {
@@ -350,7 +362,7 @@ public class ReadFile {
 
             }
             if ((nextDoc.getCity() != null || !nextDoc.getCity().equals("")) && (!nextDoc.getDate().equals("") || nextDoc.getDate() != null)) {
-                text.append(nextDoc.getDocNo() + ": " + "maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
+                text.append(nextDoc.getDocNo() + ": DocLength="+nextDoc.getDocLength() + " maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
                         nextDoc.getUniqueWords() + ", city=" + nextDoc.getCity() + ", date:" + nextDoc.getDate()+", FiveMostFreqEssences:"+FiveMostFreqEssences);
                 text.append(System.lineSeparator());
                 try {
@@ -362,7 +374,7 @@ public class ReadFile {
                 continue;
             }
             if ((nextDoc.getCity() != null || !nextDoc.getCity().equals("")) && nextDoc.getDate() == null || nextDoc.getDate().equals("")) {
-                text.append(nextDoc.getDocNo() + ": " + "maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
+                text.append(nextDoc.getDocNo() + ": DocLength="+nextDoc.getDocLength() + " maxtf=" + nextDoc.getMaxft() + ", uniqueWords=" +
                         nextDoc.getUniqueWords() + ", city=" + nextDoc.getCity()+", FiveMostFreqEssences:"+FiveMostFreqEssences);
                 text.append(System.lineSeparator());
                 try {

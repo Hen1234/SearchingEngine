@@ -28,7 +28,7 @@ public class Indexer {
     // sorted dictionary hold as key => the term, value=>file number in posting, pointer to exact line
     static TreeMap<String, String> sorted;
     // HashMap fot docs
-    private HashMap<String, Docs> docsHashMap;
+    static HashMap<String, Docs> docsHashMap;
 
     int countTotalFiles; // counter for number of termpoal files of posting
     int toWriteidx; // index for current file to write to from cache

@@ -7,4 +7,5 @@ public class QueryDoc {
     ArrayList<QueryTerm> termsInDocsAndQuery;
     ArrayList<Integer> appearamceTermInDoc;
 
+
 }

@@ -843,7 +843,7 @@ public class Parse {
 
     //update the Integer of the given doc (per term) and send add the term to the tempDictionary
     private void addTheDictionary(String termValue, Docs doc, int i) {
-
+        doc.setDocLength(doc.getDocLength()+1);
         boolean isProblem = false;
         if (!(termValue.length() > 0) || termValue == null) {
             return;

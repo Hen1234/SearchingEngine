@@ -1,20 +1,32 @@
 package Model;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class Searcher {
 
     ArrayList<QueryTerm> query;
     ArrayList<QueryDoc> docsContainsQueryTerms;
+    HashMap<String, Docs> Documents;
+    double avdl;
 
 
 
     public Searcher() {
         //this.query = query;
+        try {
+            FileInputStream f = new FileInputStream(new File(Indexer.pathDir + "\\" + "DocsAsObject.txt"));
+            ObjectInputStream o = new ObjectInputStream(f);
+            Documents = (HashMap<String, Docs>) o.readObject();
+            o.close();
+
+        } catch (Exception e) {}
     }
 
     public void setQuery(ArrayList<QueryTerm> query) {
@@ -87,5 +99,16 @@ public class Searcher {
         }
 
         }
+    }
+    private void initAvd(){
+        Integer countDocsLength =0;
+        Iterator it = Documents.entrySet().iterator();
+        while (it.hasNext()) {
+            //Terms nextTerm = (Terms) it.next();
+            //text.append(nextTerm.getValue());
+            Map.Entry pair = (Map.Entry) it.next();
+            countDocsLength =countDocsLength + ((Docs)pair.getValue()).getDocLength();
+        }
+        avdl = countDocsLength / Documents.size();
     }
 }
