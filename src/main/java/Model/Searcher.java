@@ -19,8 +19,10 @@ public class Searcher {
     HashMap<String, Docs> Documents;
     HashSet<QueryDoc> docRelevantForTheQuery;
     PriorityQueue<QueryDoc> RankedQueryDocs;
+    HashSet<String> citiesFromFilter; //hashSet for cities if the user chose filter by city
     static double avdl;
     static int numOfDocumentsInCorpus;
+
 
 
     public Searcher() {
@@ -36,7 +38,8 @@ public class Searcher {
         docRelevantForTheQuery = new HashSet<QueryDoc>();
         RankedQueryDocs = new PriorityQueue();
         ranker = new Ranker();
-        numOfDocumentsInCorpus = Documents.size();
+        //numOfDocumentsInCorpus = Documents.size();
+        citiesFromFilter = new HashSet<String>();
 
     }
 
@@ -49,8 +52,19 @@ public class Searcher {
         this.query = query;
     }
 
+    /**
+     * Setter for the citiesFromFilter
+     * @param cities
+     */
+    public void setCities(HashSet<String> cities) {
+        this.citiesFromFilter = cities;
+
+    }
+
     private void pasreQuery(String query) throws IOException {
 
+        //init the size of the numOfDocumentsInCorpus
+        numOfDocumentsInCorpus = Documents.size();
         queryAfterParse = ReadFile.p.parser(null, query, ReadFile.toStem, true);
         splitedQueryAfterParse = queryAfterParse.split(" ");
 
@@ -62,7 +76,7 @@ public class Searcher {
 
         }
 
-        for(QueryDoc currentQueryDoc: docRelevantForTheQuery ){
+        for (QueryDoc currentQueryDoc : docRelevantForTheQuery) {
 
             ranker.getQueryDocFromSearcher(currentQueryDoc);
             RankedQueryDocs.add(currentQueryDoc);
@@ -87,7 +101,7 @@ public class Searcher {
                 currentQueryTerm = new QueryTerm(curretTermOfQuery.toUpperCase());
             }
         }
-        if(currentQueryTerm != null){
+        if (currentQueryTerm != null) {
 
             //take the term's pointer from the dictionary
             String pointer = Indexer.sorted.get(curretTermOfQuery.toLowerCase());
@@ -129,6 +143,10 @@ public class Searcher {
                     int tf = Integer.parseInt(tfString);
 
                     if (Documents.containsKey(docNo)) {
+
+                        if(citiesFromFilter != null){
+                            
+                        }
                         currentQueryTerm.getDocsAndAmount().put(docNo, tf);
                         //add the QueryTerm to the relevant doc
                         Docs docFromOriginalDocs = Documents.get(docNo);
@@ -191,4 +209,6 @@ public class Searcher {
         }
         avdl = countDocsLength / Documents.size();
     }
+
+
 }

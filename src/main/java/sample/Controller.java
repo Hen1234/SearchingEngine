@@ -1,28 +1,32 @@
 package sample;
 
-        import Model.City;
-        import Model.Indexer;
-        import Model.ReadFile;
-        import Model.Searcher;
-        import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
-        import javafx.collections.FXCollections;
-        import javafx.event.ActionEvent;
-        import javafx.fxml.FXML;
-        import javafx.fxml.FXMLLoader;
-        import javafx.fxml.Initializable;
-        import javafx.scene.Parent;
-        import javafx.scene.Scene;
-        import javafx.scene.control.*;
-        import javafx.stage.DirectoryChooser;
-        import javafx.stage.FileChooser;
-        import javafx.stage.Modality;
-        import javafx.stage.Stage;
-        import org.apache.commons.io.FileUtils;
-        import sun.reflect.generics.tree.Tree;
 
-        import java.io.*;
-        import java.net.URL;
-        import java.util.*;
+import Model.City;
+import Model.Indexer;
+import Model.ReadFile;
+import Model.Searcher;
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
+import org.controlsfx.control.CheckComboBox;
+import sun.reflect.generics.tree.Tree;
+
+import java.io.*;
+import java.net.URL;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The class represent the Controller of the GUI
@@ -50,7 +54,8 @@ public class Controller implements Initializable {
     public CheckBox Stemming;
     public CheckBox FilterByCity;
     public ComboBox Languages;
-    public ComboBox Cities;
+    //public ComboBox Cities;
+    public CheckComboBox Cities;
     public String FirstPath;
     public String SecondPath;
 
@@ -61,12 +66,13 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         try {
             reader = new ReadFile();
-        } catch (Exception e) { }
+        } catch (Exception e) {
+        }
         FirstPath = "";
         SecondPath = "";
 
 
-        //searcher = new Searcher();
+        searcher = new Searcher();
         Stemming.setSelected(false);
         reset.setDisable(true);
         ShowDictionary.setDisable(true);
@@ -75,7 +81,6 @@ public class Controller implements Initializable {
         FilterByCity.setSelected(false);
         RunQuery.setDisable(true);
         LoadQueryFile.setDisable(true);
-
 
 
     }
@@ -87,6 +92,7 @@ public class Controller implements Initializable {
      * it calculates the time of the whole process.
      * it gets the languages from the ReadFile object and initialize the "combobox" of the languages.
      * it presents an information message of the process at the end of it.
+     *
      * @param event
      * @throws Exception
      */
@@ -95,7 +101,7 @@ public class Controller implements Initializable {
         if (txt_fiedCorpus.getText().isEmpty() || txt_fiedPosting.getText().isEmpty()) {
 
             showAlert("Message", "Error", "All the fields should be full");
-        }else{
+        } else {
             final long startTime = System.nanoTime();
             try {
                 reader.ReadJsoup();
@@ -103,7 +109,7 @@ public class Controller implements Initializable {
             }
             if (FirstPath.equals(""))
                 FirstPath = reader.getPostingPath();
-            else{
+            else {
                 SecondPath = reader.getPostingPath();
             }
             HashSet<String> languages = reader.getLanguages();
@@ -116,19 +122,19 @@ public class Controller implements Initializable {
             LoadDictionary.setDisable(false);
 
             HashMap<String, City> cities = reader.getCities();
-            HashSet<String> citiesName = new HashSet<String>();
-            Iterator it2 = cities.entrySet().iterator();
-            while (it2.hasNext()) {
-                Map.Entry pair = (Map.Entry) it2.next();
-                String key = (String) pair.getKey();
-                citiesName.add(key);
-            }
-            for (String string: citiesName){
-                System.out.println(string);
-            }
+//            HashSet<String> citiesName = new HashSet<String>();
+//            Iterator it2 = cities.entrySet().iterator();
+//            while (it2.hasNext()) {
+//                Map.Entry pair = (Map.Entry) it2.next();
+//                String key = (String) pair.getKey();
+//                citiesName.add(key);
+//            }
+//            for (String string: citiesName){
+//                System.out.println(string);
+//            }
 
 
-            Cities.setItems(FXCollections.observableArrayList(citiesName));
+            Cities.getItems().addAll(citiesObservableList(cities));
             Cities.setDisable(false);
             LoadQueryFile.setDisable(false);
             RunQuery.setDisable(false);
@@ -141,10 +147,10 @@ public class Controller implements Initializable {
             data.append(System.lineSeparator());
             data.append("Run Time: ");
             final long duration = System.nanoTime() - startTime;
-            data.append(duration*(Math.pow(10,-9)));
+            data.append(duration * (Math.pow(10, -9)));
             data.append(" seconds");
             data.append(System.lineSeparator());
-            showAlert("Data Message","Process Information",data.toString());
+            showAlert("Data Message", "Process Information", data.toString());
 
         }
 
@@ -152,9 +158,10 @@ public class Controller implements Initializable {
 
     /**
      * The method presents a message according to the arguments it gets
+     *
      * @param message - the content of the message
-     * @param title - the title of the message
-     * @param header - the header of the message
+     * @param title   - the title of the message
+     * @param header  - the header of the message
      */
     private void showAlert(String message, String title, String header) {
 
@@ -169,6 +176,7 @@ public class Controller implements Initializable {
      * The method is called while the user enters the path of the corpus and the
      * stop words list.
      * it sets the given path to the field of the ReadFile object.
+     *
      * @param event
      * @throws IOException
      */
@@ -187,6 +195,7 @@ public class Controller implements Initializable {
     /**
      * The method is called while the user enters the path of the posting files
      * it sets the given path to the field of the ReadFile object.
+     *
      * @param event
      * @throws IOException
      */
@@ -207,6 +216,7 @@ public class Controller implements Initializable {
     /**
      * The method is called while the user marks the option of "Stemming".
      * it sets the given choice to the field of the ReadFile object.
+     *
      * @param event
      */
     public void stemming(ActionEvent event) {
@@ -220,21 +230,22 @@ public class Controller implements Initializable {
     /**
      * The method is called while the user press the "Reset" button.
      * it deletes the whole posting files and dictionary and reset the main memory of the process.
+     *
      * @param event
      * @throws IOException
      */
     public void reset(ActionEvent event) throws IOException {
-        String pathToDelete =  reader.getPostingPath();
+        String pathToDelete = reader.getPostingPath();
         //FileUtils.cleanDirectory(new File(pathToDelete));
         try {
             FileUtils.deleteDirectory(new File(FirstPath));
+        } catch (IOException e) {
         }
-        catch (IOException e){}
         if (!SecondPath.equals(""))
             try {
                 FileUtils.deleteDirectory(new File(SecondPath));
+            } catch (IOException e) {
             }
-            catch (IOException e){}
         reader = new ReadFile();
 
     }
@@ -242,6 +253,7 @@ public class Controller implements Initializable {
     /**
      * The method is called while the user press the "Show Dictionary" button.
      * it creats a new stage for the list of the words in the dictionary
+     *
      * @param event
      */
     public void showDictionary(ActionEvent event) {
@@ -259,7 +271,6 @@ public class Controller implements Initializable {
             stage.show();
 
 
-
         } catch (Exception e) {   //////exception not found
 
 
@@ -269,21 +280,21 @@ public class Controller implements Initializable {
     /**
      * The method is called while the user press the "Load Dictionary" button.
      * it loads the dictionary to the memory.
+     *
      * @throws IOException
      */
     public void loadDictionary() throws IOException, ClassNotFoundException {
 
         String postpath;
         if (Stemming.isSelected()) {
-            postpath = pathFromUser+"\\WithStemming";
-        }
-        else{
-            postpath = pathFromUser+"\\WithoutStemming";
+            postpath = pathFromUser + "\\WithStemming";
+        } else {
+            postpath = pathFromUser + "\\WithoutStemming";
         }
         //String postpath = reader.getPostingPath();
         FileInputStream f = null;
         try {
-            f = new FileInputStream(new File(postpath +"\\" +"SortedAsObject.txt"));
+            f = new FileInputStream(new File(postpath + "\\" + "SortedAsObject.txt"));
             ObjectInputStream o = new ObjectInputStream(f);
             Dictionary = (TreeMap<String, String>) o.readObject();
             o.close();
@@ -308,4 +319,37 @@ public class Controller implements Initializable {
 
         }
     }
+
+    public void FilterByCity(ActionEvent event) {
+        if (FilterByCity.isSelected()) {
+            //ObservableList<
+            ObservableList<String> list = Cities.getCheckModel().getCheckedItems();
+            citiesFromFilter(list);
+
+
+        } else {
+
+        }
+    }
+
+
+    private ObservableList<String> citiesObservableList(HashMap<String, City> cities) {
+        //ConcurrentHashMap<String, City> map = cities;
+        ObservableList<String> citiesObservableList = FXCollections.observableArrayList();
+        for (String key : cities.keySet()) {
+            citiesObservableList.add(key);
+        }
+        return citiesObservableList;
+    }
+
+    private void citiesFromFilter(ObservableList<String> list) {
+
+        HashSet<String> citiesHashSet = new HashSet<>();
+        for(String key: list){
+            citiesHashSet.add(key);
+        }
+
+        searcher.setCities(citiesHashSet);
+    }
+
 }
