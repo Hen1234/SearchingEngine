@@ -18,6 +18,7 @@ public class Searcher {
 
     HashMap<String, Docs> Documents;
     HashSet<QueryDoc> docRelevantForTheQuery;
+    PriorityQueue<QueryDoc> RankedQueryDocs;
     static double avdl;
     static int numOfDocumentsInCorpus;
 
@@ -33,6 +34,7 @@ public class Searcher {
         } catch (Exception e) {
         }
         docRelevantForTheQuery = new HashSet<QueryDoc>();
+        RankedQueryDocs = new PriorityQueue();
         ranker = new Ranker();
         numOfDocumentsInCorpus = Documents.size();
 
@@ -60,12 +62,10 @@ public class Searcher {
 
         }
 
-
-
-
         for(QueryDoc currentQueryDoc: docRelevantForTheQuery ){
 
             ranker.getQueryDocFromSearcher(currentQueryDoc);
+            RankedQueryDocs.add(currentQueryDoc);
 
         }
 

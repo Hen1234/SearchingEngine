@@ -3,7 +3,7 @@ package Model;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class QueryDoc {
+public class QueryDoc implements Comparable {
 
     String docNO;
     HashMap<String, QueryTerm> queryTermsInDocsAndQuery;
@@ -44,5 +44,17 @@ public class QueryDoc {
 
     public void setRank(double rank) {
         this.rank = rank;
+    }
+
+
+    @Override
+    public int compareTo(Object o) {
+        if (((QueryDoc)o).rank>this.rank)
+            return -1;
+        if (((QueryDoc)o).rank<this.rank)
+            return 1;
+        if (((QueryDoc)o).rank==this.rank)
+            return 0;
+        return 0;
     }
 }
