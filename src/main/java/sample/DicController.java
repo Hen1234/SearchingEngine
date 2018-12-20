@@ -21,6 +21,7 @@ public class DicController {
      */
     public void initialize(){
         DicList = indexer.getDicToShow();
+        System.out.println(DicList.size());
         for (int i=0; i<DicList.size(); i++){
             data.getItems().add(DicList.get(i)+System.lineSeparator());
         }

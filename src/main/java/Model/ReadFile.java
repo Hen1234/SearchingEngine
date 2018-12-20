@@ -254,7 +254,7 @@ public class ReadFile {
             citiesIndexer.mergeTheCities(p.getCities());
         } catch (Exception e) {
         }
-        indexer.deleteTemporaryFiles(postingPath);
+        //indexer.deleteTemporaryFiles(postingPath);
         createDocsPosting(indexer.getDocuments());
 
     }

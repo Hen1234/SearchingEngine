@@ -489,7 +489,7 @@ public class Indexer {
                         continue;
 
                     }
-                    lineToWriteToFinalFile.append(/*firstWordInLine(curTerm.getKey()) + " " +*/ restOfInLine(curTerm.getKey()));
+                    lineToWriteToFinalFile.append(firstWordInLine(curTerm.getKey()) + " " + restOfInLine(curTerm.getKey()));
                     sorted.put(firstWordInLine(curTerm.getKey()).toUpperCase(), Integer.toString(toWriteidx) + "," + Integer.toString(lineIdx));
                     // not exist in dictionary - sequance of equals big letters
                     while (mergeQueue.size() > 0 && firstWordInLine(mergeQueue.peek().getKey()).equals(firstWordInLine(curTerm.getKey()))) {
@@ -540,7 +540,7 @@ public class Indexer {
                         }
                     }
 
-                    if (countWritenLines > 40000) {
+                    if (countWritenLines > 90000) {
                         lineIdx = 1;
                         toWriteidx++;
                         countWritenLines = 0;
@@ -575,7 +575,7 @@ public class Indexer {
 
                     // Lower case sequance
                 } else {
-                    lineToWriteToFinalFile.append(/*firstWordInLine(curTerm.getKey()) + " " +*/ restOfInLine(curTerm.getKey())); //2nd part of line from queue
+                    lineToWriteToFinalFile.append(firstWordInLine(curTerm.getKey()) + " " + restOfInLine(curTerm.getKey())); //2nd part of line from queue
                     sorted.put(firstWordInLine(curTerm.getKey()).toLowerCase(), Integer.toString(toWriteidx) + "," + Integer.toString(lineIdx));
                     while (mergeQueue.size() > 0 && mergeQueue.size() > 0 && firstWordInLine(mergeQueue.peek().getKey()).equals(firstWordInLine(curTerm.getKey()))) {
                         curTerm = mergeQueue.poll(); // the equaled term
@@ -625,7 +625,7 @@ public class Indexer {
                             isBigLetterInQueue = true;
                         }
                     }
-                    if (countWritenLines > 40000) {
+                    if (countWritenLines > 90000) {
                         toWriteidx++;
                         lineIdx = 1;
                         countWritenLines = 0;
@@ -680,7 +680,7 @@ public class Indexer {
                         toInsertToBigLetterFile = new StringBuilder("");
                         continue;
                     } else { // big letter word not in sequance - not in dictionary
-                        lineToWriteToFinalFile.append(/*firstWordInLine(curTerm.getKey()) + " " + */restOfInLine(curTerm.getKey()));
+                        lineToWriteToFinalFile.append(firstWordInLine(curTerm.getKey()) + " " + restOfInLine(curTerm.getKey()));
                         //int[] totalAndDf = TotalAndDf1(lineToWriteToFinalFile.toString());
                         //lineToWriteToFinalFile.append("Total in Corpus: " + totalAndDf[0] + " Df: " + totalAndDf[1]);
                         try {
@@ -701,7 +701,7 @@ public class Indexer {
                             }
                         }
                     }
-                    if (countWritenLines > 40000) {
+                    if (countWritenLines > 90000) {
                         toWriteidx++;
                         lineIdx = 1;
                         countWritenLines = 0;
@@ -733,7 +733,7 @@ public class Indexer {
                     lineToWriteToFinalFile = new StringBuilder("");
                     continue;
                 } else {
-                    lineToWriteToFinalFile = lineToWriteToFinalFile.append(/*firstWordInLine(curTerm.getKey()) + " " +*/ restOfInLine(curTerm.getKey()));
+                    lineToWriteToFinalFile = lineToWriteToFinalFile.append(firstWordInLine(curTerm.getKey()) + " " + restOfInLine(curTerm.getKey()));
                     //int[] totalAndDf = TotalAndDf1(lineToWriteToFinalFile.toString());
                     //lineToWriteToFinalFile.append("Total in Corpus: " + totalAndDf[0] + " Df: " + totalAndDf[1]);
                     try {
@@ -754,7 +754,7 @@ public class Indexer {
                             isBigLetterInQueue = true;
                         }
                     }
-                    if (countWritenLines > 40000) {
+                    if (countWritenLines > 90000) {
                         toWriteidx++;
                         lineIdx = 1;
                         countWritenLines = 0;
