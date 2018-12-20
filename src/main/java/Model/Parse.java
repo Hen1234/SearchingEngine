@@ -940,6 +940,9 @@ public class Parse {
 
     //update the Integer of the given doc (per term) and send add the term to the tempDictionary
     private void addTheDictionary(String termValue, Docs doc, int i) {
+        if (doc.getDocNo().equals("FBIS3-947") && i==93 ){
+            System.out.println("debug");
+        }
         doc.setDocLength(doc.getDocLength()+1);
         boolean isProblem = false;
         if (!(termValue.length() > 0) || termValue == null) {
@@ -963,7 +966,7 @@ public class Parse {
         for (Terms term : tempDictionary) {
             //while (iteratorDict.hasNext()) {
             //Terms term = iteratorDict.next();
-            if (term.getValue().equals(termValue)) { //if the terms exist in the tempDictionary
+            if (term.getValue().equals(termValue) || term.getValue().equals(termValue.toLowerCase())) { //if the terms exist in the tempDictionary
                 if (term.getDocsAndAmount().containsKey(doc)) { //if the term exists the given doc
                     Pair<Integer, StringBuilder> newPir = new Pair<Integer, StringBuilder>(term.getDocsAndAmount().get(doc).getKey() + 1, term.getDocsAndAmount().get(doc).getValue().append(" ,").append(i));
                     term.getDocsAndAmount().put(doc, newPir);
@@ -971,6 +974,30 @@ public class Parse {
                     if (cities.containsKey(tempCity) && !isProblem) { //if a city
                         cities.get(tempCity).getLocations().get(doc.getDocNo()).append(" ,").append(i);
 
+                    }
+
+
+                } else {
+                    term.getDocsAndAmount().put(doc, new Pair<Integer, StringBuilder>(1, new StringBuilder("").append(i))); //if the term does not exist the given doc
+                    String tempCity = Character.toUpperCase(termValue.charAt(0)) + termValue.substring(1, termValue.length()).toLowerCase();
+                    //String tempUpper = termValue.charAt(0) + termValue.substring(1, termValue.length()).toLowerCase();
+                    if (cities.containsKey(tempCity) && !isProblem) {//|| cities.containsKey(tempCity.toUpperCase())|| cities.containsKey(tempCity.toLowerCase())) {  //if a city
+                        cities.get(tempCity).getLocations().put(doc.getDocNo(), new StringBuilder("").append(i));
+
+                    }
+                }
+                term.totalInCorpus++;
+                return;
+            }
+            // DOG in tempdictionary and dog in termValue
+            if(Character.isLowerCase(termValue.charAt(0)) && term.getValue().equals(termValue.toUpperCase())){
+                term.setValue(termValue);
+                if (term.getDocsAndAmount().containsKey(doc)) { //if the term exists the given doc
+                    Pair<Integer, StringBuilder> newPir = new Pair<Integer, StringBuilder>(term.getDocsAndAmount().get(doc).getKey() + 1, term.getDocsAndAmount().get(doc).getValue().append(" ,").append(i));
+                    term.getDocsAndAmount().put(doc, newPir);
+                    String tempCity = Character.toUpperCase(termValue.charAt(0)) + termValue.substring(1, termValue.length()).toLowerCase();
+                    if (cities.containsKey(tempCity) && !isProblem) { //if a city
+                        cities.get(tempCity).getLocations().get(doc.getDocNo()).append(" ,").append(i);
                     }
 
 

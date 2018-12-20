@@ -18,22 +18,25 @@ public class Searcher {
 
     public TreeMap<String,String> Dictionary;
     public HashMap<String, Docs> Documents;
-    HashSet<QueryDoc> docRelevantForTheQuery;
+    HashMap<String, QueryDoc> docRelevantForTheQuery;
     PriorityQueue<QueryDoc> RankedQueryDocs;
     HashSet<String> citiesFromFilter; //hashSet for cities if the user chose filter by city
     static double avdl;
     static int numOfDocumentsInCorpus;
+    int countDocs;
+
 
 
     public Searcher() {
 
-        docRelevantForTheQuery = new HashSet<QueryDoc>();
+        docRelevantForTheQuery = new HashMap<String, QueryDoc>();
         RankedQueryDocs = new PriorityQueue();
         ranker = new Ranker();
         //numOfDocumentsInCorpus = Documents.size();
         //citiesFromFilter = new HashSet<String>();
         citiesFromFilter = null;
         Documents = Indexer.docsHashMap;
+        countDocs = 0;
 
     }
 
@@ -80,13 +83,22 @@ public class Searcher {
         }
 
 
-        for (QueryDoc currentQueryDoc : docRelevantForTheQuery) {
+        Iterator it = docRelevantForTheQuery.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            ranker.getQueryDocFromSearcher((QueryDoc)pair.getValue());
+            RankedQueryDocs.add((QueryDoc)pair.getValue());
             System.out.println(docRelevantForTheQuery.size());
+        }
+
+        /*for (QueryDoc currentQueryDoc : docRelevantForTheQuery) {
+            System.out.println(docRelevantForTheQuery.size());
+            System.out.println("countDocs= "+countDocs);
 
             ranker.getQueryDocFromSearcher(currentQueryDoc);
             RankedQueryDocs.add(currentQueryDoc);
 
-        }
+        }*/
 
         int b =0;
         while (!ranker.getqDocQueue().isEmpty() && b<50){
@@ -100,7 +112,7 @@ public class Searcher {
             QueryDoc currentQueryDocFromQueue = (QueryDoc) ranker.getqDocQueue().poll();
             currentQueryDocFromQueue.setRank(0);
         }
-        docRelevantForTheQuery = new HashSet<>();
+        docRelevantForTheQuery = new HashMap<>();
         ranker.setqDocQueue(new PriorityQueue<>());
 
     }
@@ -149,7 +161,7 @@ public class Searcher {
             String[] numOfFileAndLineOfTerm = pointer.split(",");
             String fileNum = numOfFileAndLineOfTerm[0];
             String lineNum = numOfFileAndLineOfTerm[1];
-            Integer lineNumInt = Integer.parseInt(lineNum);
+            Integer lineNumInt = Integer.parseInt(lineNum)-1;
             String lineFromFile = "";
             try {
                 //doc:FBIS3-29#2=27066 ,27079 doc:FBIS3-5232#1=481 DF- 2 TIC- 3
@@ -168,11 +180,15 @@ public class Searcher {
                 docNo="";
                 tfString="";
                 if (lineFromFile.charAt(k) == ':') {
+                    countDocs++;
                     k++;
 
                     //find the doc
                     while (lineFromFile.charAt(k) != '#') {
                         docNo = docNo + lineFromFile.charAt(k);
+                        if (docNo.equals("FBIS3-947")){
+                            System.out.println("debug");
+                        }
                         k++;
                     }
                     k++;
@@ -202,7 +218,9 @@ public class Searcher {
                                     //add the QueryTerm to the relevant doc
                                     newQueryDoc.getQueryTermsInDocsAndQuery().put(currentQueryTerm.getValue(),currentQueryTerm);
                                     //add the new QueryDoc to the HashSet of the relevant docs for the query
-                                    docRelevantForTheQuery.add(newQueryDoc);
+                                    if (!docRelevantForTheQuery.containsKey(newQueryDoc.getDocNO()))
+                                        docRelevantForTheQuery.put(newQueryDoc.getDocNO(),newQueryDoc);
+
 
                                 }
                             }
@@ -220,7 +238,10 @@ public class Searcher {
                             //add the QueryTerm to the relevant doc
                             newQueryDoc.getQueryTermsInDocsAndQuery().put(currentQueryTerm.getValue(),currentQueryTerm);
                             //add the new QueryDoc to the HashSet of the relevant docs for the query
-                            docRelevantForTheQuery.add(newQueryDoc);
+                            if (!docRelevantForTheQuery.containsKey(newQueryDoc.getDocNO()))
+                                docRelevantForTheQuery.put(newQueryDoc.getDocNO(),newQueryDoc);
+
+
 
                         }
 
