@@ -12,6 +12,7 @@ public class QueryDoc implements Comparable {
 
     public QueryDoc(String docNO) {
         this.docNO = docNO;
+        queryTermsInDocsAndQuery = new HashMap<>();
     }
 
     public String getDocNO() {

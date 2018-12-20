@@ -15,7 +15,7 @@
     <orderEntry type="module-library" scope="RUNTIME">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/VisualVMLauncher.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../VisualVMLauncher.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -24,7 +24,7 @@
     <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/CpuUsageIndicator/CpuUsageIndicator/lib/CpuUsageIndicator.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../CpuUsageIndicator/CpuUsageIndicator/lib/CpuUsageIndicator.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

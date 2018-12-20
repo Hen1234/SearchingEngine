@@ -30,6 +30,8 @@ public class Indexer {
     // HashMap fot docs
     static HashMap<String, Docs> docsHashMap;
 
+
+
     int countTotalFiles; // counter for number of termpoal files of posting
     int toWriteidx; // index for current file to write to from cache
     int fileNum = 1; // files counter
@@ -136,6 +138,11 @@ public class Indexer {
     public TreeMap<String, String> getSorted() {
         return sorted;
     }
+
+    public HashMap<String, Docs> getDocsHashMap() {
+        return docsHashMap;
+    }
+
 
     /**
      * initialize hashMap of term and replacment

@@ -297,6 +297,7 @@ public class Controller implements Initializable {
             f = new FileInputStream(new File(postpath + "\\" + "SortedAsObject.txt"));
             ObjectInputStream o = new ObjectInputStream(f);
             Dictionary = (TreeMap<String, String>) o.readObject();
+            searcher.setDictionary(Dictionary);
             o.close();
 
         } catch (IOException e) {
@@ -350,6 +351,13 @@ public class Controller implements Initializable {
         }
 
         searcher.setCities(citiesHashSet);
+    }
+
+    public void getQueryFromUser () throws IOException {
+
+        String query = txt_fiedInsertQuery.getText();
+        searcher.pasreQuery(query);
+
     }
 
 }

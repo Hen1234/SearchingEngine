@@ -12,14 +12,17 @@ public class Ranker {
 
     public void getQueryDocFromSearcher(QueryDoc currentQueryDoc){
 
+        System.out.println("here ranker");
         //iterator for the QueryTermsInTheQueryDoc
         Iterator it = currentQueryDoc.getQueryTermsInDocsAndQuery().entrySet().iterator();
         while (it.hasNext()) {
             //Terms nextTerm = (Terms) it.next();
             //text.append(nextTerm.getValue());
             Map.Entry pair = (Map.Entry) it.next();
-            QueryTerm currentQueryTerm = (QueryTerm) pair.getKey();
+            QueryTerm currentQueryTerm = (QueryTerm) pair.getValue();
+            System.out.println(currentQueryDoc.getDocNO()+"rank= "+currentQueryDoc.getRank());
             currentQueryDoc.setRank(currentQueryDoc.getRank()+BM25func(currentQueryTerm, currentQueryDoc));
+            System.out.println(currentQueryDoc.getDocNO()+"rank= "+currentQueryDoc.getRank());
 
 
         }
@@ -36,6 +39,7 @@ public class Ranker {
         int M = Searcher.numOfDocumentsInCorpus;
 
         //k=2, B=0.75
+
         return Math.log10((M+1)/df)*cwq*((3*cwd)/(cwd+(2*(0.25+(0.75*(d/avdl))))));
 
     }

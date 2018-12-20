@@ -222,6 +222,7 @@ public class ReadFile {
         }
 
 
+        //write the Dictionary as object
         File toWriteSortedAsObject = new File(postingPath + "\\" + "SortedAsObject.txt");
         ObjectOutputStream oos = null;
         try {
@@ -234,6 +235,7 @@ public class ReadFile {
         } catch (Exception e) {
         }
 
+        //write the Documents as object
         File toWriteDocsObject = new File(postingPath + "\\" + "DocsAsObject.txt");
         ObjectOutputStream oos1 = null;
         try {
@@ -241,7 +243,7 @@ public class ReadFile {
         } catch (IOException e) {
         }
         try {
-            oos1.writeObject(indexer.docsHashMap);
+            oos1.writeObject(indexer.getDocsHashMap());
             oos1.close();
         } catch (Exception e) {
         }

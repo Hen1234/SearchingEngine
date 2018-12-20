@@ -1,10 +1,11 @@
 package Model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-public class Docs {
+public class Docs implements Serializable {
     // Doc Serial
     private String DocNo;
     // Doc city between tags
