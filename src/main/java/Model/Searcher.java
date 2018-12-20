@@ -77,16 +77,31 @@ public class Searcher {
 
             initQueryTermAndQueryDocs(curretTermOfQuery);
 
-
         }
 
         System.out.println("here overFor");
         for (QueryDoc currentQueryDoc : docRelevantForTheQuery) {
+            System.out.println(docRelevantForTheQuery.size());
 
             ranker.getQueryDocFromSearcher(currentQueryDoc);
             RankedQueryDocs.add(currentQueryDoc);
 
         }
+
+        int b =0;
+        while (!ranker.getqDocQueue().isEmpty() && b<50){
+            QueryDoc currentQueryDocFromQueue = (QueryDoc) ranker.getqDocQueue().poll();
+            System.out.println(currentQueryDocFromQueue.toString()+System.lineSeparator());
+            currentQueryDocFromQueue.setRank(0);
+            b++;
+        }
+
+        while(!ranker.getqDocQueue().isEmpty()){
+            QueryDoc currentQueryDocFromQueue = (QueryDoc) ranker.getqDocQueue().poll();
+            currentQueryDocFromQueue.setRank(0);
+        }
+        docRelevantForTheQuery = new HashSet<>();
+        ranker.setqDocQueue(new PriorityQueue<>());
 
     }
 
@@ -94,7 +109,6 @@ public class Searcher {
 
 
     private void initQueryTermAndQueryDocs(String StringcurretTermOfQuery) {
-
         QueryTerm currentQueryTerm = null;
         //check if the term exists the dictionary
 
@@ -128,6 +142,7 @@ public class Searcher {
         }
 
         if (currentQueryTerm != null) {
+            System.out.println("here not null");
 
             //take the term's pointer from the dictionary
             String pointer = Indexer.sorted.get(currentQueryTerm.getValue());
@@ -195,6 +210,7 @@ public class Searcher {
 
                         //there is no filter by city
                         } else {
+
 
                             //add the doc to the QueryTerm
                             currentQueryTerm.getDocsAndAmount().put(docNo, tf);

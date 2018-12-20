@@ -58,4 +58,11 @@ public class QueryDoc implements Comparable {
             return 0;
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "docNO='" + docNO + '\'' +
+                ", rank=" + rank +
+                '}';
+    }
 }

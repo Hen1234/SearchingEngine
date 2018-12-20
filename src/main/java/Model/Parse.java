@@ -140,10 +140,18 @@ public class Parse {
                     addTheDictionary(text[i + 3], doc, i);
 
                 } else {    //if is query
-                    termsOfQuery.append(text[i] + " " + text[i + 1] + " " + text[i + 2] + " " + text[i + 3]+" ");
-                    termsOfQuery.append(text[i + 1] + "-" + text[i + 3]+" ");
-                    termsOfQuery.append(text[i + 1]+" ");
-                    termsOfQuery.append(text[i + 3]+" ");
+                    if (toStem){
+                        termsOfQuery.append(stemmer.stemming(text[i] + " " + text[i + 1] + " " + text[i + 2] + " " + text[i + 3] + " "));
+                        termsOfQuery.append(stemmer.stemming(text[i + 1] + "-" + text[i + 3] + " "));
+                        termsOfQuery.append(stemmer.stemming(text[i + 1] + " "));
+                        termsOfQuery.append(stemmer.stemming(text[i + 3] + " "));
+                    }
+                    else {
+                        termsOfQuery.append(text[i] + " " + text[i + 1] + " " + text[i + 2] + " " + text[i + 3] + " ");
+                        termsOfQuery.append(text[i + 1] + "-" + text[i + 3] + " ");
+                        termsOfQuery.append(text[i + 1] + " ");
+                        termsOfQuery.append(text[i + 3] + " ");
+                    }
 
                 }
                 i = i + 3;
@@ -154,7 +162,10 @@ public class Parse {
                 if (!isQuery) {
                     addTheDictionary(text[i], doc, i);
                 } else {
-                    termsOfQuery.append(text[i]+" ");
+                    if (toStem){
+                        termsOfQuery.append(text[i]+" ");
+                    } else
+                        termsOfQuery.append(stemmer.stemming(text[i]+" "));
                 }
 
                 continue;
@@ -167,7 +178,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(usDollarsConvert(text[i], text[i + 1]), doc, i);
                     } else {
-                        termsOfQuery.append(usDollarsConvert(text[i], text[i + 1])+" ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(usDollarsConvert(text[i], text[i + 1])+" "));
+                        }else
+                            termsOfQuery.append(usDollarsConvert(text[i], text[i + 1])+" ");
                     }
                     i = i + 3;
                     continue;
@@ -180,7 +194,11 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + "000" + " M Dollars", doc, i);
                         } else {
-                            termsOfQuery.append(text[i] + "000" + " M Dollars ");
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + "000" + " M Dollars "));
+                            }
+                                else
+                                    termsOfQuery.append(text[i] + "000" + " M Dollars ");
                         }
 
                         //terms.add(doc.getText().get(i) + "000" + " M Dollars");
@@ -195,7 +213,10 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + " M Dollars", doc, i);
                         } else {
-                            termsOfQuery.append(text[i] + " M Dollars ");
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + " M Dollars "));
+                            }else
+                                termsOfQuery.append(text[i] + " M Dollars ");
                         }
 
                         //terms.add(doc.getText().get(i) + " M Dollars");
@@ -211,7 +232,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i] + " " + text[i + 1] + " " + text[i + 2], doc, i);
                     } else {
-                        termsOfQuery.append(text[i] + " " + text[i + 1] + " " + text[i + 2]+" ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i] + " " + text[i + 1] + " " + text[i + 2]+" "));
+                        }else
+                            termsOfQuery.append(text[i] + " " + text[i + 1] + " " + text[i + 2]+" ");
                     }
 
                     i = i + 2;
@@ -230,7 +254,10 @@ public class Parse {
                             if (!isQuery) {
                                 addTheDictionary(j + " M Dollars", doc, i);
                             } else {
-                                termsOfQuery.append(j + " M Dollars ");
+                                if (toStem){
+                                    termsOfQuery.append(stemmer.stemming(j + " M Dollars "));
+                                }else
+                                    termsOfQuery.append(j + " M Dollars ");
                             }
 
                             i = i + 1;
@@ -240,7 +267,13 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(Double.toString(tmp) + " M Dollars", doc, i);
                         } else {
-                            termsOfQuery.append(Double.toString(tmp) + " M Dollars ");
+                            try {
+                                if (toStem) {
+                                    termsOfQuery.append(stemmer.stemming(Double.toString(tmp) + " M Dollars "));
+                                } else
+                                    termsOfQuery.append(Double.toString(tmp) + " M Dollars ");
+                            }
+                                catch (Exception e){}
                         }
 
                         i = i + 1;
@@ -250,6 +283,9 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + " Dollars", doc, i);
                         } else {
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + " Dollars "));
+                            }else
                             termsOfQuery.append(text[i] + " Dollars ");
                         }
 
@@ -267,7 +303,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(months.get(text[i + 1]) + "-0" + text[i], doc, i);
                     } else {
-                        termsOfQuery.append(months.get(text[i + 1]) + "-0" + text[i]+" ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(months.get(text[i + 1]) + "-0" + text[i]+" "));
+                        }else
+                            termsOfQuery.append(months.get(text[i + 1]) + "-0" + text[i]+" ");
                     }
 
                     //else addTheDictionary(months.get(text[i + 1]) + "-" + text[i], doc);
@@ -283,6 +322,9 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + "M", doc, i);
                         } else {
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + "M "));
+                            }else
                             termsOfQuery.append(text[i] + "M ");
                         }
 
@@ -297,7 +339,10 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + "B", doc, i);
                         } else {
-                            termsOfQuery.append(text[i] + "B ");
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + "B "));
+                            }else
+                                termsOfQuery.append(text[i] + "B ");
                         }
 
                         i++;
@@ -311,7 +356,10 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + "00B", doc, i);
                         } else {
-                            termsOfQuery.append(text[i] + "00B ");
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + "00B "));
+                            }else
+                                termsOfQuery.append(text[i] + "00B ");
                         }
 
                         i++;
@@ -325,7 +373,10 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(text[i] + "K", doc, i);
                         } else {
-                            termsOfQuery.append(text[i] + "K ");
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(text[i] + "K "));
+                            }else
+                                termsOfQuery.append(text[i] + "K ");
                         }
 
                         i++;
@@ -339,7 +390,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i], doc, i);
                     } else {
-                        termsOfQuery.append(text[i]+" ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i]+" "));
+                        }else
+                            termsOfQuery.append(text[i]+" ");
                     }
 
                     continue;
@@ -351,7 +405,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i] + "%", doc, i);
                     } else {
-                        termsOfQuery.append(text[i] + "% ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i] + "% "));
+                        }else
+                            termsOfQuery.append(text[i] + "% ");
                     }
 
                     i = i + 1;
@@ -367,7 +424,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(num.toString() + "K", doc, i);
                     } else {
-                        termsOfQuery.append(num.toString() + "K ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(num.toString() + "K "));
+                        }else
+                            termsOfQuery.append(num.toString() + "K ");
                     }
 
                     continue;
@@ -378,7 +438,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(num.toString() + "M", doc, i);
                     } else {
-                        termsOfQuery.append(num.toString() + "M ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(num.toString() + "M "));
+                        }else
+                            termsOfQuery.append(num.toString() + "M ");
                     }
 
                     continue;
@@ -389,7 +452,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(num.toString() + "B", doc, i);
                     } else {
-                        termsOfQuery.append(num.toString() + "B ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(num.toString() + "B "));
+                        }else
+                            termsOfQuery.append(num.toString() + "B ");
                     }
 
                     continue;
@@ -407,6 +473,10 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(months.get(text[i]) + "-0" + text[i + 1], doc, i);
                         } else {
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(months.get(text[i]) + "-0" + text[i + 1]+" "));
+                            }
+                            else
                             termsOfQuery.append(months.get(text[i]) + "-0" + text[i + 1]+" ");
                         }
 
@@ -425,7 +495,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i + 1] + "-" + months.get(text[i]), doc, i);
                     } else {
-                        termsOfQuery.append(text[i + 1] + "-" + months.get(text[i])+" ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i + 1] + "-" + months.get(text[i])+" "));
+                        }else
+                            termsOfQuery.append(text[i + 1] + "-" + months.get(text[i])+" ");
                     }
 
                     i = i + 1;
@@ -445,6 +518,9 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i].substring(1, (text[i]).length()) + "000 M Dollars", doc, i);
                     } else {
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i].substring(1, (text[i]).length()) + "000 M Dollars "));
+                        }else
                         termsOfQuery.append(text[i].substring(1, (text[i]).length()) + "000 M Dollars ");
                     }
 
@@ -458,6 +534,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i].substring(1, (text[i].length())) + " M Dollars", doc, i);
                     } else {
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i].substring(1, (text[i].length())) + " M Dollars "));
+
+                        }else
                         termsOfQuery.append(text[i].substring(1, (text[i].length())) + " M Dollars ");
                     }
 
@@ -474,7 +554,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(theNumber + " Dollars", doc, i);
                     } else {
-                        termsOfQuery.append(theNumber + " Dollars ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(theNumber + " Dollars "));
+                        }else
+                            termsOfQuery.append(theNumber + " Dollars ");
                     }
 
                     continue;
@@ -486,6 +569,9 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(j + " M Dollars", doc, i);
                         } else {
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(j + " M Dollars "));
+                            }else
                             termsOfQuery.append(j + " M Dollars ");
                         }
 
@@ -495,7 +581,10 @@ public class Parse {
                         if (!isQuery) {
                             addTheDictionary(theNum.toString() + " M Dollars", doc, i);
                         } else {
-                            termsOfQuery.append(theNum.toString() + " M Dollars ");
+                            if (toStem){
+                                termsOfQuery.append(stemmer.stemming(theNum.toString() + " M Dollars "));
+                            }else
+                                termsOfQuery.append(theNum.toString() + " M Dollars ");
                         }
 
                         continue;
@@ -511,7 +600,10 @@ public class Parse {
                     if (!isQuery) {
                         addTheDictionary(text[i] + " " + text[i + 1], doc, i);
                     } else {
-                        termsOfQuery.append(text[i] + " " + text[i + 1]+" ");
+                        if (toStem){
+                            termsOfQuery.append(stemmer.stemming(text[i] + " " + text[i + 1]+" "));
+                        }else
+                            termsOfQuery.append(text[i] + " " + text[i + 1]+" ");
                     }
 
                     continue;
@@ -522,11 +614,16 @@ public class Parse {
             if (!isQuery) {
                 addTheDictionary(text[i], doc, i);
             }else{
+                if (toStem){
+                    termsOfQuery.append(stemmer.stemming(text[i]+" "));
+                }else
                 termsOfQuery.append(text[i]+" ");
             }
 
         } //for
         if(isQuery){
+            if (toStem)
+                System.out.println(termsOfQuery.toString());
             return termsOfQuery.toString();
         }else{
             return null;

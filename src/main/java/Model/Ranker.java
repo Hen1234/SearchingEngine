@@ -3,16 +3,27 @@ package Model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.PriorityQueue;
 
 public class Ranker {
+    private PriorityQueue<QueryDoc> qDocQueue;
 
 
     public Ranker() {
+        qDocQueue = new PriorityQueue<QueryDoc>();
+    }
+
+    public PriorityQueue<QueryDoc> getqDocQueue() {
+        return qDocQueue;
+    }
+
+    public void setqDocQueue(PriorityQueue<QueryDoc> qDocQueue) {
+        this.qDocQueue = qDocQueue;
     }
 
     public void getQueryDocFromSearcher(QueryDoc currentQueryDoc){
 
-        System.out.println("here ranker");
+
         //iterator for the QueryTermsInTheQueryDoc
         Iterator it = currentQueryDoc.getQueryTermsInDocsAndQuery().entrySet().iterator();
         while (it.hasNext()) {
@@ -20,13 +31,13 @@ public class Ranker {
             //text.append(nextTerm.getValue());
             Map.Entry pair = (Map.Entry) it.next();
             QueryTerm currentQueryTerm = (QueryTerm) pair.getValue();
-            System.out.println(currentQueryDoc.getDocNO()+"rank= "+currentQueryDoc.getRank());
+            //System.out.println(currentQueryDoc.getDocNO()+"rank= "+currentQueryDoc.getRank());
             currentQueryDoc.setRank(currentQueryDoc.getRank()+BM25func(currentQueryTerm, currentQueryDoc));
-            System.out.println(currentQueryDoc.getDocNO()+"rank= "+currentQueryDoc.getRank());
+            //System.out.println(currentQueryDoc.getDocNO()+"rank= "+currentQueryDoc.getRank());
 
 
         }
-
+        qDocQueue.add(currentQueryDoc);
     }
 
     private double BM25func(QueryTerm currentQueryTerm, QueryDoc currentQueryDoc) {
