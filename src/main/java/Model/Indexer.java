@@ -798,6 +798,7 @@ public class Indexer {
      * @throws IOException
      */
     private void initClose() throws IOException {
+        toRead = new ArrayList<>();
         try {
             for (int i = 0; i < fos.size(); i++) {
                 fos.get(i).close();

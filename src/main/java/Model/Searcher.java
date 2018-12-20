@@ -79,7 +79,7 @@ public class Searcher {
 
         }
 
-        System.out.println("here overFor");
+
         for (QueryDoc currentQueryDoc : docRelevantForTheQuery) {
             System.out.println(docRelevantForTheQuery.size());
 
@@ -142,7 +142,7 @@ public class Searcher {
         }
 
         if (currentQueryTerm != null) {
-            System.out.println("here not null");
+
 
             //take the term's pointer from the dictionary
             String pointer = Indexer.sorted.get(currentQueryTerm.getValue());
@@ -183,7 +183,6 @@ public class Searcher {
                         k++;
                     }
 
-                    System.out.println(tfString);
                     int tf = Integer.parseInt(tfString);
 
                     if (Documents.containsKey(docNo)) {
@@ -233,7 +232,6 @@ public class Searcher {
                         lineFromFile.charAt(k + 1) == 'F' && lineFromFile.charAt(k + 2) == '-' &&
                         lineFromFile.charAt(k + 3) == ' ') {
 
-                    System.out.println("here DF");
                     String df = "";
                     int q = 4;
                     while (k + q < lineFromFile.length()) {
@@ -286,12 +284,11 @@ public class Searcher {
     private void loadDocuments() {
 
         try {
-            System.out.println(Indexer.pathDir + "\\" + "DocsAsObject.txt");
+
             FileInputStream f = new FileInputStream(new File(Indexer.pathDir + "\\" + "DocsAsObject.txt"));
 
             ObjectInputStream o = new ObjectInputStream(f);
             Documents = (HashMap<String, Docs>) o.readUnshared();
-            System.out.println("here docs");
             o.close();
 
         } catch (Exception e) {
