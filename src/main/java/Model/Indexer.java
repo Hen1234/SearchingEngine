@@ -559,10 +559,13 @@ public class Indexer {
 
                     }
                     lineIdx++;
-                    try {
+
+                    try{
                         if(Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))){
                             insertDocQueue(firstWordInLine(curTermKey), lineToWriteToFinalFile.toString());
                         }
+                    }catch (Exception e){}
+                    try {
 
                         bw.get(bw.size() - 1).write(lineToWriteToFinalFile.toString());
                         bw.get(bw.size() - 1).flush();
@@ -643,10 +646,14 @@ public class Indexer {
                         } catch (Exception e) {
                         }
                     }
-                    try {
-                        if(Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))){
+
+                    try{
+                        if(Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))) {
                             insertDocQueue(firstWordInLine(curTermKey), lineToWriteToFinalFile.toString());
                         }
+                    }catch(Exception e){}
+
+                    try {
                         bw.get(bw.size() - 1).write(lineToWriteToFinalFile.toString());
                         bw.get(bw.size() - 1).flush();
                     } catch (Exception e) {
@@ -719,10 +726,16 @@ public class Indexer {
                         }
 
                     }
+
                     try {
-                        if(Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))){
+                        if (Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))) {
                             insertDocQueue(firstWordInLine(curTermKey), lineToWriteToFinalFile.toString());
                         }
+
+                    }catch (Exception e){}
+
+
+                    try {
                         bw.get(bw.size() - 1).write(lineToWriteToFinalFile.toString());
                         bw.get(bw.size() - 1).flush();
                     } catch (Exception e) {
@@ -771,10 +784,14 @@ public class Indexer {
                         } catch (Exception e) {
                         }
                     }
+
                     try {
-                        if(Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))){
+                        if (Character.isUpperCase(firstWordInLine(curTermKey).charAt(0))) {
                             insertDocQueue(firstWordInLine(curTermKey), lineToWriteToFinalFile.toString());
                         }
+                    }catch (Exception e){}
+                    try {
+
                         bw.get(bw.size() - 1).write(lineToWriteToFinalFile.toString());
                         bw.get(bw.size() - 1).flush();
                     } catch (Exception e) {
